@@ -9,19 +9,19 @@ const moduleBase = getMainModule().base;
 //搜索SendToClientFilter
 Interceptor.attach(moduleBase.add(0x7D71940), {
     onEnter(args) {
-        // console.log("[hook] sub_7D71940 onEnter");
+        console.log("[hook] sub_7D71940 onEnter");
     },
     onLeave(retval) {
-        // console.log("[hook] sub_7D71940 onLeave, retval:", retval);
+        console.log("[hook] sub_7D71940 onLeave, retval:", retval);
         if (retval && !retval.isNull()) {
             // Modify v8[2] to ensure it equals 6
             // v8[2] corresponds to offset 8 (since each element is 4 bytes)
             const v8_2_address = retval.add(8);
-            // console.log("[hook] sub_7D71940 - Current v8[2] value:", v8_2_address.readU32());
+            console.log("[hook] sub_7D71940 - Current v8[2] value:", v8_2_address.readU32());
             if (v8_2_address.readU32() == 6) {
                 v8_2_address.writeU32(0x0);
             }
-            // console.log("[hook] sub_7D71940 - Modified v8[2] to:", v8_2_address.readU32());
+            console.log("[hook] sub_7D71940 - Modified v8[2] to:", v8_2_address.readU32());
         }
     }
 });
@@ -49,7 +49,7 @@ Interceptor.attach(moduleBase.add(0x7D80A10), {
                         if (allowedValues.includes(currentValue)) {
                             // console.log("[inteceptor] sub_7D80A10 - Value in allowed range, setting to 1101");
                             targetAddress.writeInt(1101);
-                            // console.log("[inteceptor] sub_7D80A10 - Value set to 1101 successfully");
+                            console.log("[inteceptor] sub_7D80A10 - Value set to 1101 successfully");
                         } else {
                             // console.log("[inteceptor] sub_7D80A10 - Value not in allowed range, skipping modification");
                             return;
@@ -91,3 +91,4 @@ Interceptor.attach(moduleBase.add(0x4F0555C), {
         retval.replace(0x0);
     }
 });
+
