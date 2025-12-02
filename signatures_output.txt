@@ -1,0 +1,141 @@
+[Simple Signature] Starting to get function signatures...
+[Simple Signature] Looking for WeChatAppEx Framework module...
+[Simple Signature] Found module: WeChatAppEx Framework at 0x125604000, size: 156270592
+[Simple Signature] Extracting signatures for target functions...
+
+[Simple Signature] Checking SendToClientFilter at address: 0x12d375940
+[Simple Signature] SendToClientFilter signature: ff 03 02 d1 f4 4f 06 a9 fd 7b 07 a9 fd c3 01 91 40 e5 05 4f e0 03 81 3c 94 d6 00 b0 94 a2 2b 91
+[Simple Signature] Searching for SendToClientFilter signature...
+[Simple Signature] Found 1 matches for SendToClientFilter
+
+[Simple Signature] Checking AppletIndexContainer::OnLoadStart1 at address: 0x12d384a10
+[Simple Signature] AppletIndexContainer::OnLoadStart1 signature: ff c3 07 d1 fa 67 1a a9 f8 5f 1b a9 f6 57 1c a9 f4 4f 1d a9 fd 7b 1e a9 fd 83 07 91 f4 03 01 aa
+[Simple Signature] Searching for AppletIndexContainer::OnLoadStart1 signature...
+[Simple Signature] Found 3 matches for AppletIndexContainer::OnLoadStart1
+
+[Simple Signature] Checking AppletIndexContainer::OnLoadStart2 at address: 0x12a4b3204
+[Simple Signature] AppletIndexContainer::OnLoadStart2 signature: ff c3 05 d1 fc 6f 13 a9 f6 57 14 a9 f4 4f 15 a9 fd 7b 16 a9 fd 83 05 91 f4 03 01 aa f3 03 00 aa
+[Simple Signature] Searching for AppletIndexContainer::OnLoadStart2 signature...
+[Simple Signature] Found 70 matches for AppletIndexContainer::OnLoadStart2
+
+[Simple Signature] Checking WAPCAdapterAppIndex at address: 0x12a50955c
+[Simple Signature] WAPCAdapterAppIndex signature: ff 43 01 d1 f6 57 02 a9 f4 4f 03 a9 fd 7b 04 a9 fd 03 01 91 c8 6b 02 90 08 01 74 39 1f 05 00 71
+[Simple Signature] Searching for WAPCAdapterAppIndex signature...
+[Simple Signature] Found 1 matches for WAPCAdapterAppIndex
+
+[Simple Signature] === FINAL SIGNATURES RESULTS ===
+{
+  "sendToClientFilter": {
+    "desc": "SendToClientFilter",
+    "offset": "7d71940",
+    "address": "0x12d375940",
+    "signature": "ff 03 02 d1 f4 4f 06 a9 fd 7b 07 a9 fd c3 01 91 40 e5 05 4f e0 03 81 3c 94 d6 00 b0 94 a2 2b 91",
+    "matchCount": 1,
+    "matches": [
+      "0x12d375940"
+    ]
+  },
+  "appletIndexContainerOnLoadStart1": {
+    "desc": "AppletIndexContainer::OnLoadStart1",
+    "offset": "7d80a10",
+    "address": "0x12d384a10",
+    "signature": "ff c3 07 d1 fa 67 1a a9 f8 5f 1b a9 f6 57 1c a9 f4 4f 1d a9 fd 7b 1e a9 fd 83 07 91 f4 03 01 aa",
+    "matchCount": 3,
+    "matches": [
+      "0x12a70d0a8",
+      "0x12b2e31d0",
+      "0x12d384a10"
+    ]
+  },
+  "appletIndexContainerOnLoadStart2": {
+    "desc": "AppletIndexContainer::OnLoadStart2",
+    "offset": "4eaf204",
+    "address": "0x12a4b3204",
+    "signature": "ff c3 05 d1 fc 6f 13 a9 f6 57 14 a9 f4 4f 15 a9 fd 7b 16 a9 fd 83 05 91 f4 03 01 aa f3 03 00 aa",
+    "matchCount": 70,
+    "matches": [
+      "0x1256bdf1c",
+      "0x1260ae8b0",
+      "0x12699d560",
+      "0x126dc237c",
+      "0x1271e9338",
+      "0x127ba0e50",
+      "0x127c9f2d0",
+      "0x128ea6f2c",
+      "0x128ea7c44",
+      "0x128ead268",
+      "0x128ec1494",
+      "0x128ec5954",
+      "0x1292c15e0",
+      "0x1294208dc",
+      "0x129cbdd8c",
+      "0x12a29a29c",
+      "0x12a3043c8",
+      "0x12a306234",
+      "0x12a310124",
+      "0x12a31de50",
+      "0x12a32cfb4",
+      "0x12a367748",
+      "0x12a3f02f0",
+      "0x12a3fada0",
+      "0x12a48a700",
+      "0x12a4b3204",
+      "0x12a4c3f38",
+      "0x12a4da3ac",
+      "0x12a4da4c8",
+      "0x12a50cc2c",
+      "0x12a50fe50",
+      "0x12a510a88",
+      "0x12a5130f8",
+      "0x12a5132c4",
+      "0x12a5a9be0",
+      "0x12a5beed0",
+      "0x12a5d61f4",
+      "0x12a606794",
+      "0x12a65c624",
+      "0x12a6b44f0",
+      "0x12a6d49c4",
+      "0x12a6e8f70",
+      "0x12a708664",
+      "0x12a752f2c",
+      "0x12a76d134",
+      "0x12a79ebd8",
+      "0x12a7fe6c8",
+      "0x12aab8318",
+      "0x12ab4f7ec",
+      "0x12abca5ac",
+      "0x12abccee4",
+      "0x12abcd130",
+      "0x12abcd284",
+      "0x12ac0272c",
+      "0x12ad70be0",
+      "0x12ae1e20c",
+      "0x12b22f0a0",
+      "0x12b2bd97c",
+      "0x12b4b37d0",
+      "0x12b5eb86c",
+      "0x12b63a224",
+      "0x12b997010",
+      "0x12cd1f604",
+      "0x12d5162fc",
+      "0x12d533df4",
+      "0x12d534d64",
+      "0x12d579d54",
+      "0x12d59a940",
+      "0x12d7fd5d4",
+      "0x12d94ced4"
+    ]
+  },
+  "wapcAdapterAppIndex": {
+    "desc": "WAPCAdapterAppIndex",
+    "offset": "4f0555c",
+    "address": "0x12a50955c",
+    "signature": "ff 43 01 d1 f6 57 02 a9 f4 4f 03 a9 fd 7b 04 a9 fd 03 01 91 c8 6b 02 90 08 01 74 39 1f 05 00 71",
+    "matchCount": 1,
+    "matches": [
+      "0x12a50955c"
+    ]
+  }
+}
+
+[Simple Signature] Signature extraction completed!

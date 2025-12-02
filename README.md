@@ -1,5 +1,8 @@
 # WMPFDebugger
 ida arm打开（时间很久 要等）
+```
+cd '/Applications/WeChat.app/Contents/MacOS/WeChatAppEx.app/Contents/Frameworks/WeChatAppEx Framework.framework/Versions/C'
+```
 ## 搜索[perf] AppletIndexContainer::OnLoadStart
 ![alt text](image.png)
 修改为这个地方的偏移

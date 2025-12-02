@@ -5,6 +5,7 @@ import path from "node:path";
 import * as frida from "frida";
 import WebSocket, { WebSocketServer } from "ws";
 import { execSync } from "child_process";
+import { argv } from "node:process";
 
 // 假设这些是 CommonJS 模块
 const codex = require("./third-party/RemoteDebugCodex.js");
@@ -31,8 +32,7 @@ const bufferToHexString = (buffer: ArrayBuffer) => {
 // --- 全局变量用于存储服务器和 Frida 会话实例 ---
 let debugWSS: WebSocketServer | null = null;
 let proxyWSS: WebSocketServer | null = null;
-let fridaSession: frida.Session | null = null;
-let fridaScript: frida.Script | null = null;
+let fridaSessions: Array<{session: frida.Session, script: frida.Script, pid: number}> = [];
 
 const debug_server = () => {
     const wss = new WebSocketServer({ port: DEBUG_PORT });
@@ -147,10 +147,10 @@ const proxy_server = () => {
 };
 
 // 动态获取 WeChatAppEx 进程 PID 的函数
-const getWeChatAppExPID = (): number => {
+const getWeChatAppExPID = (): number[] => {
     try {
         // 注意：路径可能需要根据你的实际安装位置调整
-        const command = `pgrep -f '/Applications/WeChat.app/Contents/MacOS/WeChatAppEx.app/Contents/MacOS/WeChatAppEx'`;
+        const command = `pgrep -f '/MacOS/WeChatAppEx.app/Contents/MacOS/WeChatAppEx'`;
         const output = execSync(command, { encoding: "utf-8" }).trim();
         const pids = output
             .split("\n")
@@ -161,10 +161,9 @@ const getWeChatAppExPID = (): number => {
             throw new Error("No WeChatAppEx processes found");
         }
 
-        // 返回找到的第一个 PID（可根据需要修改）
+        // 返回所有找到的 PID
         console.log(`[frida] Found WeChatAppEx PIDs: ${pids.join(", ")}`);
-        console.log(`[frida] Using PID: ${pids[0]}`);
-        return pids[0];
+        return pids;
     } catch (error) {
         console.error(`[frida] Error getting WeChatAppEx PID: ${error}`);
         throw error;
@@ -174,32 +173,67 @@ const getWeChatAppExPID = (): number => {
 const frida_server = async () => {
     const localDevice = await frida.getLocalDevice();
 
-    // 获取动态 PID
-    const pid = getWeChatAppExPID();
-
-    // 附加到进程
-    const session = await localDevice.attach(pid);
+    // 获取所有 WeChatAppEx 进程的 PID
+    const pids = getWeChatAppExPID();
 
     // 查找 hook 脚本
     // 使用 __dirname 获取当前脚本所在目录更可靠
     const projectRoot = path.join(__dirname, "..");
+    
+    // 解析命令行参数，查找 --script 参数
+    let scriptPath = "frida/hook.js"; // 默认脚本
+    for (let i = 0; i < argv.length; i++) {
+        if (argv[i] === "--script" && i + 1 < argv.length) {
+            scriptPath = argv[i + 1];
+            console.log(`[frida] Using custom script: ${scriptPath}`);
+            break;
+        }
+    }
+    
     let scriptContent: string | null = null;
     try {
+        // 使用绝对路径或相对于项目根目录的路径
+        const absoluteScriptPath = path.isAbsolute(scriptPath) ? scriptPath : path.join(projectRoot, scriptPath);
         scriptContent = (
-            await promises.readFile(path.join(projectRoot, "frida/hook.js"))
+            await promises.readFile(absoluteScriptPath)
         ).toString();
+        console.log(`[frida] Loaded script from: ${absoluteScriptPath}`);
     } catch (e) {
+        console.error(`[frida] Error loading script: ${e}`);
         throw new Error("[frida] hook script not found");
     }
 
-    // 加载脚本
-    const script = await session.createScript(scriptContent);
-    script.message.connect((message) => {
-        console.log("[frida client]", message);
-    });
-    await script.load();
-
-    return { session, script }; // 返回 session 和 script 引用以便管理
+    // 附加到所有找到的进程并加载脚本
+    const sessionsAndScripts: Array<{session: frida.Session, script: frida.Script, pid: number}> = [];
+    
+    for (const pid of pids) {
+        try {
+            console.log(`[frida] Attaching to WeChatAppEx process PID: ${pid}`);
+            // 附加到进程
+            const session = await localDevice.attach(pid);
+            
+            // 加载脚本
+            const script = await session.createScript(scriptContent);
+            script.message.connect((message) => {
+                console.log(`[frida client] PID ${pid}:`, message);
+            });
+            
+            await script.load();
+            console.log(`[frida] Successfully attached to PID ${pid}`);
+            
+            sessionsAndScripts.push({ session, script, pid });
+        } catch (error) {
+            console.error(`[frida] Error attaching to PID ${pid}: ${error}`);
+            // 继续尝试其他进程
+        }
+    }
+    
+    if (sessionsAndScripts.length === 0) {
+        throw new Error("[frida] Failed to attach to any WeChatAppEx process");
+    }
+    
+    console.log(`[frida] Successfully attached to ${sessionsAndScripts.length} WeChatAppEx processes`);
+    return sessionsAndScripts;
 };
 
 // --- 关闭服务器和清理资源的函数 ---
@@ -207,6 +241,33 @@ const shutdown = async () => {
     console.log("\n[shutdown] Shutting down servers and cleaning up...");
 
     const closePromises: Promise<void>[] = [];
+
+    // 关闭所有 Frida 会话和脚本
+    if (fridaSessions.length > 0) {
+        console.log(`[shutdown] Detaching ${fridaSessions.length} Frida sessions...`);
+        
+        for (const { session, script, pid } of fridaSessions) {
+            try {
+                // 先卸载脚本
+                if (script) {
+                    console.log(`[shutdown] Unloading script from PID ${pid}...`);
+                    await script.unload();
+                }
+                
+                // 然后分离会话
+                if (session) {
+                    console.log(`[shutdown] Detaching from PID ${pid}...`);
+                    await session.detach();
+                }
+            } catch (error) {
+                console.error(`[shutdown] Error cleaning up PID ${pid}: ${error}`);
+            }
+        }
+        
+        // 清空会话数组
+        fridaSessions = [];
+        console.log("[shutdown] All Frida sessions detached.");
+    }
 
     // 关闭 Debug WebSocket Server
     if (debugWSS) {
@@ -279,10 +340,6 @@ const shutdown = async () => {
         }
     }
 
-
-    
-
-
     console.log("[shutdown] Shutdown complete. Exiting.");
     process.exit(0); // 强制退出，确保清理完毕
 };
@@ -294,8 +351,7 @@ const main = async () => {
         debugWSS = debug_server();
         proxyWSS = proxy_server();
         const fridaObjects = await frida_server();
-        fridaSession = fridaObjects.session;
-        fridaScript = fridaObjects.script; // 保存脚本引用
+        fridaSessions = fridaObjects; // 保存所有会话和脚本引用
 
         // 添加 SIGINT (Ctrl+C) 和 SIGTERM 监听器
         process.on("SIGINT", () => {

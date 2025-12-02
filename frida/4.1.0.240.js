@@ -7,7 +7,7 @@ const moduleBase = getMainModule().base;
 
 
 //搜索SendToClientFilter
-Interceptor.attach(moduleBase.add(0x81BFC04), {
+Interceptor.attach(moduleBase.add(0x7D71940), {
     onEnter(args) {
         // console.log("[hook] sub_7D71940 onEnter");
     },
@@ -27,7 +27,7 @@ Interceptor.attach(moduleBase.add(0x81BFC04), {
 });
 
 //搜索[perf] AppletIndexContainer::OnLoadStart，最后一个的函数，参考readme
-Interceptor.attach(moduleBase.add(0x81CEC08), {
+Interceptor.attach(moduleBase.add(0x7D80A10), {
     onEnter(args) {
         // console.log("[inteceptor] sub_7D80A10 onEnter, first_param: ", args[0]);
         
@@ -36,7 +36,7 @@ Interceptor.attach(moduleBase.add(0x81CEC08), {
             const v4 = result.add(8).readPointer();
             
             if (v4 && !v4.isNull()) {
-                const qword1 = v4.add(1376).readPointer();
+                const qword1 = v4.add(1336).readPointer();
                 if (qword1 && !qword1.isNull()) {
                     const qword2 = qword1.add(16).readPointer();
                     if (qword2 && !qword2.isNull()) {
@@ -69,9 +69,9 @@ Interceptor.attach(moduleBase.add(0x81CEC08), {
 
 
 // 搜索[perf] AppletIndexContainer::OnLoadStart
-Interceptor.attach(moduleBase.add(0x4F0620C), {
+Interceptor.attach(moduleBase.add(0x4EAF204), {
     onEnter(args) {
-        console.log("[inteceptor] sub_4EAF204 onEnter, first_param: ", args[0], "second_param: ", args[1]);
+        // console.log("[inteceptor] sub_4EAF204 onEnter, first_param: ", args[0], "second_param: ", args[1]);
         
         // In ARM64 architecture, the second parameter is passed in X1 register
         // Based on IDA disassembly: MOV X20, X1 (0x4EAF21C)
@@ -85,7 +85,7 @@ Interceptor.attach(moduleBase.add(0x4F0620C), {
 });
 
 //搜索WAPCAdapterAppIndex.js，第一个引用
-Interceptor.attach(moduleBase.add(0x4F699E8), {
+Interceptor.attach(moduleBase.add(0x4F0555C), {
     onEnter(args) {
     },onLeave(retval) {
         retval.replace(0x0);
