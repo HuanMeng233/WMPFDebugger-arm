@@ -4,10 +4,13 @@ https://github.com/evi0s/WMPFDebugger
 
 ## 使用
 
-git clone https://github.com/chain00x/WMPFDebugger-arm
-cd WMPFDebugger-arm
-yarn
-npx ts-node src/index.ts
+```git clone https://github.com/chain00x/WMPFDebugger-arm```
+
+```cd WMPFDebugger-arm```
+
+```yarn```
+
+```npx ts-node src/index.ts```
 
 ## 不通版本偏移查找
 
