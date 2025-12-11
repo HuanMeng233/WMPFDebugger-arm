@@ -12,6 +12,11 @@ https://github.com/evi0s/WMPFDebugger
 
 ```npx ts-node src/index.ts```
 
+浏览器访问
+```
+devtools://devtools/bundled/inspector.html?ws=127.0.0.1:62000
+```
+
 ## 不通版本偏移查找
 
 ida arm打开（时间很久 要等）
