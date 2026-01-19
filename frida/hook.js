@@ -1,4 +1,4 @@
-//Based on version 4.1.5.47
+//Based on version 4.1.6.47
 const getMainModule = () => {
 	return Process.findModuleByName("WeChatAppEx Framework");
 };
