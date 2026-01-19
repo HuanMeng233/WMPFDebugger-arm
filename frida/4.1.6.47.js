@@ -6,7 +6,7 @@ const getMainModule = () => {
 const moduleBase = getMainModule().base;
 
 //搜索SendToClientFilter
-Interceptor.attach(moduleBase.add(0x7d71940), {
+Interceptor.attach(moduleBase.add(0x8385f44), {
 	onEnter(args) {
 		// console.log("[hook] sub_7D71940 onEnter");
 	},
@@ -17,7 +17,7 @@ Interceptor.attach(moduleBase.add(0x7d71940), {
 			// v8[2] corresponds to offset 8 (since each element is 4 bytes)
 			const v8_2_address = retval.add(8);
 			// console.log("[hook] sub_7D71940 - Current v8[2] value:", v8_2_address.readU32());
-			if (v8_2_address.readU32() == 6) {
+			if (v8_2_address.readU32() === 6) {
 				v8_2_address.writeU32(0x0);
 			}
 			// console.log("[hook] sub_7D71940 - Modified v8[2] to:", v8_2_address.readU32());
@@ -26,7 +26,7 @@ Interceptor.attach(moduleBase.add(0x7d71940), {
 });
 
 //搜索[perf] AppletIndexContainer::OnLoadStart，最后一个的函数，参考readme
-Interceptor.attach(moduleBase.add(0x7d80a10), {
+Interceptor.attach(moduleBase.add(0x8394f24), {
 	onEnter(args) {
 		// console.log("[inteceptor] sub_7D80A10 onEnter, first_param: ", args[0]);
 
@@ -35,7 +35,7 @@ Interceptor.attach(moduleBase.add(0x7d80a10), {
 			const v4 = result.add(8).readPointer();
 
 			if (v4 && !v4.isNull()) {
-				const qword1 = v4.add(1336).readPointer();
+				const qword1 = v4.add(1376).readPointer();
 				if (qword1 && !qword1.isNull()) {
 					const qword2 = qword1.add(16).readPointer();
 					if (qword2 && !qword2.isNull()) {
@@ -72,9 +72,14 @@ Interceptor.attach(moduleBase.add(0x7d80a10), {
 });
 
 // 搜索[perf] AppletIndexContainer::OnLoadStart
-Interceptor.attach(moduleBase.add(0x4eaf204), {
+Interceptor.attach(moduleBase.add(0x4f43880), {
 	onEnter(args) {
-		// console.log("[inteceptor] sub_4EAF204 onEnter, first_param: ", args[0], "second_param: ", args[1]);
+		console.log(
+			"[inteceptor] sub_4EAF204 onEnter, first_param: ",
+			args[0],
+			"second_param: ",
+			args[1],
+		);
 
 		// In ARM64 architecture, the second parameter is passed in X1 register
 		// Based on IDA disassembly: MOV X20, X1 (0x4EAF21C)
@@ -88,7 +93,7 @@ Interceptor.attach(moduleBase.add(0x4eaf204), {
 });
 
 //搜索WAPCAdapterAppIndex.js，第一个引用
-Interceptor.attach(moduleBase.add(0x4f0555c), {
+Interceptor.attach(moduleBase.add(0x4fa746c), {
 	onEnter(args) {},
 	onLeave(retval) {
 		retval.replace(0x0);
